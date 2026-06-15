@@ -684,7 +684,7 @@ const handleCancelReply = (comment: CommentItem) => {
               </div>
             </div>
 
-            <div class="mb-8">
+            <!-- <div class="mb-8">
               <div class="flex gap-4 items-start">
                 <div
                   class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container shrink-0 font-bold shadow-sm">
@@ -709,7 +709,7 @@ const handleCancelReply = (comment: CommentItem) => {
                   Comment
                 </button>
               </div>
-            </div>
+            </div> -->
 
             <div class="space-y-6 overflow-y-auto no-scrollbar max-h-[600px] pr-1">
               <div v-for="comment in comments" :key="comment.id" class="flex gap-4 text-sm animate-fade-in">
