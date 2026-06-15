@@ -78,11 +78,10 @@ export const useVideoPlayer = (videos: VideoItem[]) => {
         responsive: true
       }
 
-      // If video has a privacy hash, use full url format
+      // Use native id and hash options for private videos
+      options.id = Number(currentVideo.value.vimeoId)
       if (currentVideo.value.hash) {
-        options.url = `https://player.vimeo.com/video/${currentVideo.value.vimeoId}?h=${currentVideo.value.hash}`
-      } else {
-        options.id = Number(currentVideo.value.vimeoId)
+        options.hash = currentVideo.value.hash
       }
 
       // Initialize the native player
@@ -111,9 +110,19 @@ export const useVideoPlayer = (videos: VideoItem[]) => {
     if (player) {
       try {
         if (currentVideo.value.hash) {
-          await player.loadVideo(`https://player.vimeo.com/video/${currentVideo.value.vimeoId}?h=${currentVideo.value.hash}`)
+          await player.loadVideo({
+            id: Number(currentVideo.value.vimeoId),
+            hash: currentVideo.value.hash
+          })
         } else {
           await player.loadVideo(Number(currentVideo.value.vimeoId))
+        }
+        
+        // Explicitly trigger play after loading the new video
+        try {
+          await player.play()
+        } catch (playErr) {
+          console.log('Autoplay blocked or play failed:', playErr)
         }
       } catch (e) {
         console.error('Error loading video:', e)

@@ -18,28 +18,41 @@ export interface YoutubeVideoItem {
 const loadYoutubeScript = (): Promise<void> => {
   return new Promise((resolve) => {
     if (import.meta.server) return resolve()
+    
+    // If YT API is already loaded and ready, resolve immediately
     if ((window as any).YT && (window as any).YT.Player) {
       return resolve()
     }
     
-    // Setup callback
-    const existingCallback = (window as any).onYouTubeIframeAPIReady
-    (window as any).onYouTubeIframeAPIReady = () => {
-      if (existingCallback) existingCallback()
+    // Chain our resolve to the global YouTube API ready callback
+    const previousCallback = (window as any).onYouTubeIframeAPIReady
+    ;(window as any).onYouTubeIframeAPIReady = () => {
+      if (previousCallback) {
+        try {
+          previousCallback()
+        } catch (e) {
+          console.error('Error in previous YouTube API callback:', e)
+        }
+      }
       resolve()
     }
 
-    // Check if script is already injected
+    // Check if the script tag already exists in document
     const scripts = document.getElementsByTagName('script')
+    let scriptExists = false
     for (let i = 0; i < scripts.length; i++) {
       if (scripts[i].src === 'https://www.youtube.com/iframe_api') {
-        return // Already loading, callback will resolve
+        scriptExists = true
+        break
       }
     }
 
-    const script = document.createElement('script')
-    script.src = 'https://www.youtube.com/iframe_api'
-    document.head.appendChild(script)
+    // If script doesn't exist, inject it
+    if (!scriptExists) {
+      const script = document.createElement('script')
+      script.src = 'https://www.youtube.com/iframe_api'
+      document.head.appendChild(script)
+    }
   })
 }
 
@@ -69,12 +82,12 @@ export const useYoutubePlayer = (videos: YoutubeVideoItem[]) => {
 
       // Create a nested target element for YouTube Player to replace
       const playerTarget = document.createElement('div')
-      playerTarget.id = 'yt-iframe-player'
       container.appendChild(playerTarget)
 
       const YT = (window as any).YT
 
-      player = new YT.Player('yt-iframe-player', {
+      // Pass the HTML element reference directly to prevent duplicate ID issues
+      player = new YT.Player(playerTarget, {
         videoId: currentVideo.value.youtubeId,
         playerVars: {
           autoplay: 1,

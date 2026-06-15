@@ -315,10 +315,11 @@ const handleCancelReply = (comment: CommentItem) => {
     </div>
 
     <!-- ==================== MAIN PAGE LAYOUT GRID ==================== -->
-    <main class="w-full max-w-[1440px] p-6 grid grid-cols-1  gap-8 mx-auto">
+    <main class="max-w-[1440px] mx-auto px-4 lg:px-gutter py-6 lg:py-4 w-full">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full">
       
       <!-- ==================== LEFT COLUMN: INFO & PLAYLIST ==================== -->
-      <div class="lg:col-span-2 space-y-8">
+      <div class="lg:col-span-12 space-y-8">
           
           <!-- Video Metadata & Creator Info -->
           <section class="bg-surface-container-low p-6 lg:p-8 rounded-xl border border-outline-variant shadow-sm transition-all duration-300 hover:shadow-md">
@@ -328,10 +329,16 @@ const handleCancelReply = (comment: CommentItem) => {
                 <h1 class="font-headline-lg text-xl lg:text-3xl text-on-surface mb-2 font-bold uppercase tracking-tight">
                   {{ playerState?.currentVideo?.value?.title }}
                 </h1>
-                <div class="flex items-center gap-4 text-on-surface-variant font-body-md text-sm">
-                  <span>{{ playerState?.currentVideo?.value?.views }}</span>
+                <div class="flex items-center gap-4 text-on-surface-variant font-body-md text-sm select-none">
+                  <div class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-lg leading-none">visibility</span>
+                    <span>{{ playerState?.currentVideo?.value?.views }}</span>
+                  </div>
                   <span class="w-1 h-1 bg-outline-variant rounded-full"></span>
-                  <span>{{ playerState?.currentVideo?.value?.timeAgo }}</span>
+                  <div class="flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-lg leading-none">schedule</span>
+                    <span>{{ playerState?.currentVideo?.value?.timeAgo }}</span>
+                  </div>
                 </div>
               </div>
                           <!-- Action Buttons (Share, Like, Flag) -->
@@ -751,7 +758,7 @@ const handleCancelReply = (comment: CommentItem) => {
             </button>
           </div>
         </aside> -->
-
+      </div>
     </main>
 
     <!-- ==================== BOTTOM NAVBAR (MOBILE ONLY) ==================== -->
