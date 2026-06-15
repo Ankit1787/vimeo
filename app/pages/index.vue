@@ -544,9 +544,8 @@ const handleCancelReply = (comment: CommentItem) => {
             </div>
 
             <!-- Mobile Comments List -->
-            <div class="space-y-6">
+            <!-- <div class="space-y-6">
               <div v-for="comment in comments" :key="comment.id" class="flex gap-3 text-sm">
-                <!-- Avatar -->
                 <div class="w-9 h-9 rounded-full border border-outline-variant overflow-hidden shrink-0 shadow-inner bg-secondary-container flex items-center justify-center text-on-secondary-container">
                   <img v-if="comment.avatar" :src="comment.avatar" class="w-full h-full object-cover" />
                   <span v-else class="font-bold">{{ comment.author[0] }}</span>
@@ -561,7 +560,6 @@ const handleCancelReply = (comment: CommentItem) => {
                     {{ comment.content }}
                   </p>
                   
-                  <!-- Like / Reply Controls -->
                   <div class="flex items-center gap-4 mt-2">
                     <button
                       class="flex items-center gap-1 text-on-surface-variant hover:text-primary transition-colors cursor-pointer"
@@ -579,7 +577,6 @@ const handleCancelReply = (comment: CommentItem) => {
                     </button>
                   </div>
 
-                  <!-- Reply Input (Mobile) -->
                   <div v-if="comment.showReplyInput" class="mt-4 flex gap-2 items-start pl-2 border-l-2 border-outline-variant">
                     <input
                       v-model="comment.replyText"
@@ -602,7 +599,6 @@ const handleCancelReply = (comment: CommentItem) => {
                     </button>
                   </div>
 
-                  <!-- Replies List -->
                   <div v-if="comment.replies.length > 0" class="mt-4 space-y-4 pl-4 border-l-2 border-outline-variant/60">
                     <div v-for="reply in comment.replies" :key="reply.id" class="flex gap-2 text-xs">
                       <div class="w-7 h-7 rounded-full border border-outline-variant overflow-hidden shrink-0 bg-secondary-container flex items-center justify-center font-bold text-[10px]">
@@ -621,7 +617,7 @@ const handleCancelReply = (comment: CommentItem) => {
 
                 </div>
               </div>
-            </div>
+            </div> -->
           </section>
 
         </div>
