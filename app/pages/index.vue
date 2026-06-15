@@ -315,16 +315,15 @@ const handleCancelReply = (comment: CommentItem) => {
     </div>
 
     <!-- ==================== MAIN PAGE LAYOUT GRID ==================== -->
-    <main class="max-w-[1440px] mx-auto px-4 lg:px-gutter py-6 lg:py-4">
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        <!-- ==================== LEFT COLUMN: INFO & PLAYLIST ==================== -->
-        <div class="lg:col-span-8 space-y-6">
+    <main class="w-full max-w-[1440px] p-6 grid grid-cols-1  gap-8 mx-auto">
+      
+      <!-- ==================== LEFT COLUMN: INFO & PLAYLIST ==================== -->
+      <div class="lg:col-span-2 space-y-8">
           
           <!-- Video Metadata & Creator Info -->
           <section class="bg-surface-container-low p-6 lg:p-8 rounded-xl border border-outline-variant shadow-sm transition-all duration-300 hover:shadow-md">
             <!-- Header Section -->
-            <div class="flex flex-col sm:flex-row justify-between items-start gap-4 mb-4">
+            <div class="flex flex-col  justify-between items-start gap-4 mb-4">
               <div>
                 <h1 class="font-headline-lg text-xl lg:text-3xl text-on-surface mb-2 font-bold uppercase tracking-tight">
                   {{ playerState?.currentVideo?.value?.title }}
@@ -335,46 +334,28 @@ const handleCancelReply = (comment: CommentItem) => {
                   <span>{{ playerState?.currentVideo?.value?.timeAgo }}</span>
                 </div>
               </div>
-              
-              <!-- Action Buttons -->
-              <!-- Desktop Actions -->
-              <div class="hidden sm:flex items-center gap-2">
-                <button class="flex items-center gap-2 px-4 py-2 rounded-full border border-outline-variant hover:bg-surface-container-high transition-colors active:scale-95 cursor-pointer">
-                  <span class="material-symbols-outlined text-lg">thumb_up</span>
-                  <span class="font-label-md text-label-md">12K</span>
+                          <!-- Action Buttons (Share, Like, Flag) -->
+              <div class="flex items-center gap-2 mt-2 sm:mt-0 text-slate-500">
+                <button class="p-2 hover:bg-slate-100 rounded-full transition-colors cursor-pointer text-slate-500 hover:text-primary active:scale-90">
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                  </svg>
                 </button>
-                <button class="flex items-center gap-2 px-4 py-2 rounded-full border border-outline-variant hover:bg-surface-container-high transition-colors active:scale-95 cursor-pointer">
-                  <span class="material-symbols-outlined text-lg">share</span>
-                  <span class="font-label-md text-label-md">Share</span>
+                <button class="p-2 hover:bg-slate-100 rounded-full transition-colors cursor-pointer text-slate-500 hover:text-primary active:scale-90">
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                  </svg>
                 </button>
-                <button class="p-2 rounded-full border border-outline-variant hover:bg-surface-container-high active:scale-95 cursor-pointer flex items-center justify-center">
-                  <span class="material-symbols-outlined text-lg">more_horiz</span>
-                </button>
-              </div>
-
-              <!-- Mobile Actions (Horizontal Scroll) -->
-              <div class="flex sm:hidden gap-2 w-full overflow-x-auto pb-2 no-scrollbar">
-                <button class="flex items-center gap-2 px-4 py-2 bg-surface-container-high rounded-full font-label-md text-on-surface text-sm active:scale-95 transition-transform shrink-0 border border-transparent">
-                  <span class="material-symbols-outlined text-lg">thumb_up</span>
-                  <span>12K</span>
-                </button>
-                <button class="flex items-center gap-2 px-4 py-2 bg-surface-container-high rounded-full font-label-md text-on-surface text-sm active:scale-95 transition-transform shrink-0">
-                  <span class="material-symbols-outlined text-lg">share</span>
-                  <span>Share</span>
-                </button>
-                <button class="flex items-center gap-2 px-4 py-2 bg-surface-container-high rounded-full font-label-md text-on-surface text-sm active:scale-95 transition-transform shrink-0">
-                  <span class="material-symbols-outlined text-lg">download</span>
-                  <span>Download</span>
-                </button>
-                <button class="flex items-center gap-2 px-4 py-2 bg-surface-container-high rounded-full font-label-md text-on-surface text-sm active:scale-95 transition-transform shrink-0">
-                  <span class="material-symbols-outlined text-lg">playlist_add</span>
-                  <span>Save</span>
+                <button class="p-2 hover:bg-slate-100 rounded-full transition-colors cursor-pointer text-slate-500 hover:text-primary active:scale-90">
+                  <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                  </svg>
                 </button>
               </div>
             </div>
 
             <!-- Creator / Channel Info Bar -->
-            <div class="flex items-center gap-4 py-6 border-y border-outline-variant mb-6">
+            <div class="flex items-center gap-4 py-6 border-t border-outline-variant mb-2">
               <img
                 alt="Creator Avatar"
                 class="w-12 h-12 rounded-full border border-outline-variant shadow-sm"
@@ -388,13 +369,13 @@ const handleCancelReply = (comment: CommentItem) => {
                   {{ playerState.currentVideo?.value?.subscribers }}
                 </p>
               </div>
-              <button
+              <!-- <button
                 class="px-6 py-2 rounded-full font-label-md text-sm lg:text-md font-bold transition-all duration-300 active:scale-95 cursor-pointer shadow-sm"
                 :class="isSubscribed ? 'bg-surface-container-highest text-on-surface-variant border border-outline-variant' : 'bg-on-surface text-surface hover:bg-primary hover:text-white'"
                 @click="toggleSubscribe"
               >
                 {{ isSubscribed ? 'Subscribed' : 'Subscribe' }}
-              </button>
+              </button> -->
             </div>
 
             <!-- Expandable Video Description -->
@@ -647,7 +628,7 @@ const handleCancelReply = (comment: CommentItem) => {
 
         <!-- ==================== RIGHT COLUMN: COMMENTS (DESKTOP) & PROMOS ==================== -->
         <!-- (Renders on desktop, hides on mobile) -->
-        <aside class="hidden lg:col-span-4 lg:flex flex-col gap-6">
+        <!-- <aside class="hidden lg:col-span-1 lg:flex flex-col gap-6">
           <div class="bg-surface-container p-6 rounded-xl border border-outline-variant flex flex-col shadow-sm">
             <div class="flex justify-between items-center mb-6">
               <h3 class="font-headline-md text-md text-on-surface font-semibold select-none">
@@ -659,7 +640,6 @@ const handleCancelReply = (comment: CommentItem) => {
               </div>
             </div>
 
-            <!-- Desktop Comment Input -->
             <div class="mb-8">
               <div class="flex gap-4 items-start">
                 <div class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container shrink-0 font-bold shadow-sm">
@@ -691,16 +671,13 @@ const handleCancelReply = (comment: CommentItem) => {
               </div>
             </div>
 
-            <!-- Desktop Comments List -->
             <div class="space-y-6 overflow-y-auto no-scrollbar max-h-[600px] pr-1">
               <div v-for="comment in comments" :key="comment.id" class="flex gap-4 text-sm animate-fade-in">
-                <!-- Avatar -->
                 <div class="w-10 h-10 rounded-full border border-outline-variant overflow-hidden shrink-0 shadow-inner bg-secondary-container flex items-center justify-center text-on-secondary-container">
                   <img v-if="comment.avatar" :src="comment.avatar" class="w-full h-full object-cover" />
                   <span v-else class="font-bold">{{ comment.author[0] }}</span>
                 </div>
                 
-                <!-- Comment Body -->
                 <div class="flex-1">
                   <div class="flex items-center gap-2 mb-1">
                     <span class="font-bold text-on-surface font-semibold">{{ comment.author }}</span>
@@ -710,7 +687,6 @@ const handleCancelReply = (comment: CommentItem) => {
                     {{ comment.content }}
                   </p>
                   
-                  <!-- Like / Reply -->
                   <div class="flex items-center gap-4 mt-2">
                     <button
                       class="flex items-center gap-1 text-on-surface-variant hover:text-primary transition-colors cursor-pointer"
@@ -728,7 +704,6 @@ const handleCancelReply = (comment: CommentItem) => {
                     </button>
                   </div>
 
-                  <!-- Reply Input (Desktop) -->
                   <div v-if="comment.showReplyInput" class="mt-4 flex gap-2 items-start pl-2 border-l-2 border-outline-variant">
                     <input
                       v-model="comment.replyText"
@@ -751,7 +726,6 @@ const handleCancelReply = (comment: CommentItem) => {
                     </button>
                   </div>
 
-                  <!-- Replies List (Desktop) -->
                   <div v-if="comment.replies.length > 0" class="mt-4 space-y-4 pl-4 border-l-2 border-outline-variant/60">
                     <div v-for="reply in comment.replies" :key="reply.id" class="flex gap-3 text-xs">
                       <div class="w-8 h-8 rounded-full border border-outline-variant overflow-hidden shrink-0 bg-secondary-container flex items-center justify-center font-bold">
@@ -773,7 +747,6 @@ const handleCancelReply = (comment: CommentItem) => {
             </div>
           </div>
 
-          <!-- Stream+ Upgrade Promo Card -->
           <div class="relative rounded-xl overflow-hidden bg-primary-container p-6 text-on-primary shadow-md hover:shadow-lg transition-shadow">
             <h4 class="font-display text-lg font-bold mb-2">Upgrade to Stream+</h4>
             <p class="text-sm mb-4 opacity-90 leading-relaxed">Watch ad-free, download educational videos, and support your favorite creators.</p>
@@ -781,9 +754,8 @@ const handleCancelReply = (comment: CommentItem) => {
               Learn More
             </button>
           </div>
-        </aside>
+        </aside> -->
 
-      </div>
     </main>
 
     <!-- ==================== BOTTOM NAVBAR (MOBILE ONLY) ==================== -->
