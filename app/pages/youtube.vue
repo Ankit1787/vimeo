@@ -305,48 +305,6 @@ const handleCancelReply = (comment: CommentItem) => {
 
 <template>
   <div class="min-h-screen bg-background text-on-background font-body-md pb-16 lg:pb-0">
-    <!-- ==================== DESKTOP NAVIGATION BAR ==================== -->
-    <nav class="hidden lg:flex bg-background border-b border-outline-variant justify-between items-center h-16 px-margin-desktop w-full sticky top-0 z-50">
-      <div class="flex items-center gap-8">
-        <span class="font-display text-2xl font-bold text-primary uppercase tracking-tighter cursor-pointer hover:opacity-90 transition-opacity">
-          CinemaStream
-        </span>
-        <div class="flex gap-6">
-          <NuxtLink class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md" to="/">Vimeo</NuxtLink>
-          <NuxtLink class="text-primary font-bold border-b-2 border-primary pb-2 font-label-md text-label-md transition-all" to="/youtube">YouTube</NuxtLink>
-          <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">Trending</a>
-          <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">Library</a>
-        </div>
-      </div>
-      <div class="flex items-center gap-6">
-        <div class="relative hidden lg:block">
-          <input
-            class="bg-surface-container-high border-none rounded-full px-6 py-2 w-64 text-label-md focus:ring-2 focus:ring-primary focus:outline-none placeholder-on-surface-variant/50 transition-all duration-300"
-            placeholder="Search YouTube videos..."
-            type="text"
-          />
-        </div>
-        <div class="flex items-center gap-4">
-          <button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all duration-200 hover:scale-110 active:scale-90 cursor-pointer">
-            notifications
-          </button>
-          <button class="material-symbols-outlined text-on-surface-variant hover:text-primary transition-all duration-200 hover:scale-110 active:scale-90 cursor-pointer">
-            apps
-          </button>
-          <button class="bg-primary hover:bg-primary/90 text-on-primary font-label-md text-label-md px-4 py-2 rounded-xl active:scale-95 transition-all duration-200 cursor-pointer shadow-md hover:shadow-lg">
-            Upload
-          </button>
-          <div class="w-10 h-10 rounded-full border border-outline-variant overflow-hidden shadow-inner cursor-pointer hover:border-primary transition-colors duration-200">
-            <img
-              alt="User profile"
-              class="w-full h-full object-cover"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkLcQ03OZXe1bl1ozq1qQkBv988JLOP81pFI3QNQeelAebn1aspNzK4vmW-MSTgiANtzYza4OFbINFaVyjDhrr2SmQhAuYTiKVV4n6cGDicU2UQ1mD5r_rHJmKa2MiHjMAdF9Ce_KVO0RMzKVlW2OOfs8giafKE8OXwEsJ7I_wP4K065MBxXPsMRuSSxSl8nrR1wK7WEthgAUToJucJFxErLHrla-bPQmw5Une6JlXf_o0wMJp63UYfX_oeHhhG737y1deeQfoG_0"
-            />
-          </div>
-        </div>
-      </div>
-    </nav>
-
     <!-- ==================== RESPONSIVE VIDEO PLAYER CONTAINER ==================== -->
     <div class="sticky top-0 z-40 lg:relative lg:top-auto lg:z-10 bg-black lg:bg-transparent w-full">
       <div class="max-w-[1440px] mx-auto px-0 lg:px-gutter lg:pt-4 lg:pb-6">
@@ -623,36 +581,17 @@ const handleCancelReply = (comment: CommentItem) => {
           </div>
         </div>
 
-        <div class="relative rounded-xl overflow-hidden bg-primary-container p-6 text-on-primary shadow-md hover:shadow-lg transition-shadow">
+        <!-- <div class="relative rounded-xl overflow-hidden bg-primary-container p-6 text-on-primary shadow-md hover:shadow-lg transition-shadow">
           <h4 class="font-display text-lg font-bold mb-2">Upgrade to Stream+</h4>
           <p class="text-sm mb-4 opacity-90 leading-relaxed">Watch ad-free, download educational videos, and support your favorite creators.</p>
           <button class="w-full bg-surface-container-lowest text-primary py-2 rounded-xl font-label-md text-label-md font-bold hover:bg-surface-bright active:scale-95 transition-all cursor-pointer">
             Learn More
           </button>
-        </div>
+        </div> -->
       </aside>
       </div>
     </main>
 
-    <!-- ==================== BOTTOM NAVBAR (MOBILE ONLY) ==================== -->
-    <nav class="lg:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-2 bg-surface-container border-t border-outline-variant shadow-lg rounded-t-xl">
-      <NuxtLink class="flex flex-col items-center justify-center text-on-surface-variant active:scale-95 transition-transform tap-highlight-none" to="/">
-        <span class="material-symbols-outlined text-[24px]">home</span>
-        <span class="font-label-sm text-[10px] mt-0.5">Vimeo</span>
-      </NuxtLink>
-      <NuxtLink class="flex flex-col items-center justify-center text-primary bg-primary-container/10 rounded-full py-1 px-4 active:scale-95 transition-transform tap-highlight-none" to="/youtube">
-        <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">explore</span>
-        <span class="font-label-sm text-[10px] mt-0.5 font-bold">YouTube</span>
-      </NuxtLink>
-      <a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-95 transition-transform tap-highlight-none" href="#">
-        <span class="material-symbols-outlined text-[24px]">subscriptions</span>
-        <span class="font-label-sm text-[10px] mt-0.5">Subscribed</span>
-      </a>
-      <a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-95 transition-transform tap-highlight-none" href="#">
-        <span class="material-symbols-outlined text-[24px]">video_library</span>
-        <span class="font-label-sm text-[10px] mt-0.5">Library</span>
-      </a>
-    </nav>
   </div>
 </template>
 
