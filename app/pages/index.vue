@@ -270,9 +270,9 @@ const handleCancelReply = (comment: CommentItem) => {
           CinemaStream
         </span>
         <div class="flex gap-6">
-          <a class="text-primary font-bold border-b-2 border-primary pb-2 font-label-md text-label-md transition-all" href="#">Explore</a>
+          <NuxtLink class="text-primary font-bold border-b-2 border-primary pb-2 font-label-md text-label-md transition-all" to="/">Vimeo</NuxtLink>
+          <NuxtLink class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md" to="/youtube">YouTube</NuxtLink>
           <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">Trending</a>
-          <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">Subscriptions</a>
           <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">Library</a>
         </div>
       </div>
@@ -756,14 +756,14 @@ const handleCancelReply = (comment: CommentItem) => {
 
     <!-- ==================== BOTTOM NAVBAR (MOBILE ONLY) ==================== -->
     <nav class="lg:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-2 bg-surface-container border-t border-outline-variant shadow-lg rounded-t-xl">
-      <a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-95 transition-transform tap-highlight-none" href="#">
+      <NuxtLink class="flex flex-col items-center justify-center text-primary bg-primary-container/10 rounded-full py-1 px-4 active:scale-95 transition-transform tap-highlight-none" to="/">
         <span class="material-symbols-outlined text-[24px]">home</span>
-        <span class="font-label-sm text-[10px] mt-0.5">Home</span>
-      </a>
-      <a class="flex flex-col items-center justify-center text-primary bg-primary-container/10 rounded-full py-1 px-4 active:scale-95 transition-transform tap-highlight-none" href="#">
+        <span class="font-label-sm text-[10px] mt-0.5 font-bold">Vimeo</span>
+      </NuxtLink>
+      <NuxtLink class="flex flex-col items-center justify-center text-on-surface-variant active:scale-95 transition-transform tap-highlight-none" to="/youtube">
         <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">explore</span>
-        <span class="font-label-sm text-[10px] mt-0.5 font-bold">Explore</span>
-      </a>
+        <span class="font-label-sm text-[10px] mt-0.5">YouTube</span>
+      </NuxtLink>
       <a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-95 transition-transform tap-highlight-none" href="#">
         <span class="material-symbols-outlined text-[24px]">subscriptions</span>
         <span class="font-label-sm text-[10px] mt-0.5">Subscribed</span>
