@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted, watch } from 'vue'
 import { useYoutubePlayer, type YoutubeVideoItem } from '~/composables/useYoutubePlayer'
 import YoutubePlayer from '~/components/video/YoutubePlayer.vue'
 
@@ -102,6 +102,7 @@ const playerState = useYoutubePlayer(videos)
 
 onMounted(() => {
   fetchYoutubeMetadata()
+  loadComments()
 
   // Keydown event listener for Arrow keys to navigate between videos
   const handleKeydown = (event: KeyboardEvent) => {
@@ -196,6 +197,110 @@ const comments = ref<CommentItem[]>([
     replies: []
   }
 ])
+
+// Comments Actions
+const commentInputText = ref('')
+
+const loadComments = async () => {
+  const videoId = playerState.currentVideo.value?.youtubeId
+  if (!videoId) return
+  try {
+    const data = await $fetch<{ comments: CommentItem[] }>(`/api/comments?videoId=${videoId}`)
+    if (data && data.comments) {
+      comments.value = data.comments
+    } else {
+      comments.value = []
+    }
+  } catch (err) {
+    console.error('Failed to load comments from API:', err)
+  }
+}
+
+watch(() => playerState.currentIndex.value, () => {
+  loadComments()
+})
+
+const handleAddComment = async () => {
+  const text = commentInputText.value.trim()
+  if (!text) return
+  
+  const videoId = playerState.currentVideo.value?.youtubeId
+  if (!videoId) return
+
+  // Optimistic local add
+  const tempComment = {
+    id: Date.now(),
+    author: 'You (Viewer)',
+    avatar: '',
+    content: text,
+    timeAgo: 'Just now',
+    likes: 0,
+    hasLiked: false,
+    showReplyInput: false,
+    replyText: '',
+    replies: []
+  }
+  comments.value.unshift(tempComment)
+  commentInputText.value = ''
+
+  try {
+    const res = await $fetch<any>(`/api/comments?videoId=${videoId}`, {
+      method: 'POST',
+      body: { text }
+    })
+    
+    if (res && res.success && res.comment) {
+      // Replace optimistic temp comment with API comment
+      const idx = comments.value.findIndex(c => c.id === tempComment.id)
+      if (idx !== -1) {
+        comments.value[idx] = res.comment
+      }
+    } else {
+      comments.value = comments.value.filter(c => c.id !== tempComment.id)
+      alert('Failed to add comment: Invalid response from server.')
+    }
+  } catch (err: any) {
+    console.error('Failed to add YouTube comment via API:', err)
+    comments.value = comments.value.filter(c => c.id !== tempComment.id)
+    alert(`Failed to add comment: ${err.data?.message || err.message || 'Unknown error'}`)
+  }
+}
+
+const toggleLikeComment = (comment: CommentItem) => {
+  comment.hasLiked = !comment.hasLiked
+  if (comment.hasLiked) {
+    comment.likes++
+  } else {
+    comment.likes--
+  }
+}
+
+const toggleReplyInput = (comment: CommentItem) => {
+  comment.showReplyInput = !comment.showReplyInput
+  if (comment.showReplyInput) {
+    comment.replyText = ''
+  }
+}
+
+const handleAddReply = (comment: CommentItem) => {
+  if (!comment.replyText.trim()) return
+  
+  comment.replies.push({
+    id: Date.now(),
+    author: 'You (Viewer)',
+    avatar: '', // Fallback profile icon
+    content: comment.replyText.trim(),
+    timeAgo: 'Just now'
+  })
+  
+  comment.replyText = ''
+  comment.showReplyInput = false
+}
+
+const handleCancelReply = (comment: CommentItem) => {
+  comment.replyText = ''
+  comment.showReplyInput = false
+}
 </script>
 
 <template>
@@ -254,7 +359,7 @@ const comments = ref<CommentItem[]>([
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full">
       
       <!-- ==================== LEFT COLUMN: INFO & PLAYLIST ==================== -->
-      <div class="lg:col-span-12 space-y-8">
+      <div class="lg:col-span-8 space-y-8">
         
         <!-- Video Metadata & Creator Info -->
         <section class="bg-surface-container-low p-6 lg:p-8 rounded-xl border border-outline-variant shadow-sm transition-all duration-300 hover:shadow-md">
@@ -445,7 +550,7 @@ const comments = ref<CommentItem[]>([
 
       <!-- ==================== RIGHT COLUMN: COMMENTS (DESKTOP) & PROMOS ==================== -->
       <!-- (Renders on desktop, hides on mobile) -->
-      <!-- <aside class="hidden lg:col-span-1 lg:flex flex-col gap-6">
+      <aside class="hidden lg:flex lg:col-span-4 flex-col gap-6">
         <div class="bg-surface-container p-6 rounded-xl border border-outline-variant flex flex-col shadow-sm">
           <div class="flex justify-between items-center mb-6">
             <h3 class="font-headline-md text-md text-on-surface font-semibold select-none">
@@ -469,6 +574,18 @@ const comments = ref<CommentItem[]>([
                   placeholder="Add a comment..."
                   rows="1"
                 ></textarea>
+                 <div v-if="commentInputText.trim()" class="flex justify-end gap-2 mt-2 transition-all">
+                  <button
+                    class="px-3 py-1 rounded-full text-xs font-semibold text-on-surface-variant hover:bg-surface-container-high"
+                    @click="commentInputText = ''">
+                    Cancel
+                  </button>
+                  <button
+                    class="px-4 py-1 rounded-full text-xs font-bold bg-primary text-on-primary hover:bg-primary/95"
+                    @click="handleAddComment">
+                    Comment
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -513,7 +630,7 @@ const comments = ref<CommentItem[]>([
             Learn More
           </button>
         </div>
-        </aside> -->
+      </aside>
       </div>
     </main>
 

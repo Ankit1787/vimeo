@@ -16,5 +16,8 @@
     "video.js": "^8.23.7",
     "vue": "^3.5.35",
     "vue-router": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.3"
   }
 }
