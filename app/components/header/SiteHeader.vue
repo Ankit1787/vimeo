@@ -25,10 +25,16 @@ const route = useRoute()
             YouTube
           </NuxtLink>
           <NuxtLink 
+            :class="route.path === '/showcase' ? 'text-primary font-bold border-b-2 border-primary pb-2 font-label-md text-label-md transition-all' : 'text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md'" 
+            to="/showcase"
+          >
+            Showcase
+          </NuxtLink>
+          <NuxtLink 
             :class="route.path === '/playlist' ? 'text-primary font-bold border-b-2 border-primary pb-2 font-label-md text-label-md transition-all' : 'text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md'" 
             to="/playlist"
           >
-            Showcase
+          Playlist
           </NuxtLink>
         </div>
       </div>

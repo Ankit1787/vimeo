@@ -16,7 +16,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="relative w-full aspect-video bg-black lg:rounded-xl overflow-hidden group shadow-2xl">
+  <div class="relative w-full aspect-video bg-black  overflow-hidden group shadow-2xl">
     <!-- Vimeo player container div where the SDK will generate the iframe -->
     <div
       ref="playerContainer"

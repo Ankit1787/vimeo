@@ -1,4 +1,4 @@
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, isRef, type Ref } from 'vue'
 
 export interface VideoItem {
   id: string | number
@@ -37,7 +37,7 @@ const loadVimeoScript = (): Promise<void> => {
   })
 }
 
-export const useVideoPlayer = (videos: VideoItem[]) => {
+export const useVideoPlayer = (videos: VideoItem[] | Ref<VideoItem[]>) => {
   const containerRef = ref<HTMLDivElement | null>(null)
   let player: any = null
 
@@ -45,8 +45,13 @@ export const useVideoPlayer = (videos: VideoItem[]) => {
   const autoplayNext = ref(true)
   const isPlayerReady = ref(false)
 
+  const getVideosList = (): VideoItem[] => {
+    return isRef(videos) ? videos.value : videos
+  }
+
   const currentVideo = computed(() => {
-    return videos[currentIndex.value]
+    const list = getVideosList()
+    return list[currentIndex.value] || null
   })
 
   // Initialize Vimeo Player inside container element
@@ -102,19 +107,20 @@ export const useVideoPlayer = (videos: VideoItem[]) => {
   }
 
   const changeVideo = async (index: number) => {
-    if (index < 0 || index >= videos.length) return
+    const list = getVideosList()
+    if (index < 0 || index >= list.length) return
 
     currentIndex.value = index
     isPlayerReady.value = false
 
     if (player) {
       try {
-        if (currentVideo.value.hash) {
+        if (currentVideo.value?.hash) {
           await player.loadVideo({
             id: Number(currentVideo.value.vimeoId),
             hash: currentVideo.value.hash
           })
-        } else {
+        } else if (currentVideo.value) {
           await player.loadVideo(Number(currentVideo.value.vimeoId))
         }
         
@@ -137,17 +143,19 @@ export const useVideoPlayer = (videos: VideoItem[]) => {
   }
 
   const next = async () => {
+    const list = getVideosList()
     let nextIndex = currentIndex.value + 1
-    if (nextIndex >= videos.length) {
+    if (nextIndex >= list.length) {
       nextIndex = 0
     }
     await changeVideo(nextIndex)
   }
 
   const previous = async () => {
+    const list = getVideosList()
     let prevIndex = currentIndex.value - 1
     if (prevIndex < 0) {
-      prevIndex = videos.length - 1
+      prevIndex = list.length - 1
     }
     await changeVideo(prevIndex)
   }
