@@ -75,7 +75,7 @@ export const useVideoPlayer = (videos: VideoItem[]) => {
       const options: any = {
         loop: false,
         autoplay: true,
-        responsive: true
+        responsive: false
       }
 
       // Use native id and hash options for private videos

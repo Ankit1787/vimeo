@@ -24,8 +24,12 @@ const route = useRoute()
           >
             YouTube
           </NuxtLink>
-          <!-- <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">Trending</a>
-          <a class="text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md" href="#">Library</a> -->
+          <NuxtLink 
+            :class="route.path === '/playlist' ? 'text-primary font-bold border-b-2 border-primary pb-2 font-label-md text-label-md transition-all' : 'text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md'" 
+            to="/playlist"
+          >
+            Showcase
+          </NuxtLink>
         </div>
       </div>
       <!-- <div class="flex items-center gap-6">
@@ -72,6 +76,13 @@ const route = useRoute()
       >
         <span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">explore</span>
         <span class="font-label-sm text-[10px] mt-0.5">YouTube</span>
+      </NuxtLink>
+      <NuxtLink
+        :class="route.path === '/playlist' ? 'flex flex-col items-center justify-center text-primary bg-primary-container/10 rounded-full py-1 px-4 active:scale-95 transition-transform tap-highlight-none' : 'flex flex-col items-center justify-center text-on-surface-variant active:scale-95 transition-transform tap-highlight-none'"
+        to="/playlist"
+      >
+        <span class="material-symbols-outlined text-[24px]">playlist_play</span>
+        <span class="font-label-sm text-[10px] mt-0.5 font-bold">Showcase</span>
       </NuxtLink>
       <!-- <a class="flex flex-col items-center justify-center text-on-surface-variant active:scale-95 transition-transform tap-highlight-none" href="#">
         <span class="material-symbols-outlined text-[24px]">subscriptions</span>

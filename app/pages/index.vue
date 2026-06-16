@@ -7,7 +7,7 @@ const isServer = import.meta.server
 
 // Load Google Fonts and Material Icons using useHead
 useHead({
-  title: 'CinemaStream | Premium Educational Streaming',
+  title: 'VideoVerse | Premium Educational Streaming',
   link: [
     {
       rel: 'stylesheet',
@@ -673,7 +673,8 @@ const handleCancelReply = (comment: CommentItem) => {
                 <div class="flex-1">
                   <div class="flex items-center gap-2 mb-1">
                     <span class="font-bold text-on-surface font-semibold">{{ comment.author }}</span>
-                    <span class="text-xs text-on-surface-variant">{{ comment.timeAgo == 'NaNd ago'?'just now': comment.timeAgo}}</span>
+                    <span class="text-xs text-on-surface-variant">{{ comment.timeAgo == 'NaNd ago' ? 'just now' :
+                      comment.timeAgo}}</span>
                   </div>
                   <p class="text-on-surface-variant leading-relaxed">
                     {{ comment.content }}
@@ -744,9 +745,9 @@ const handleCancelReply = (comment: CommentItem) => {
           </div> -->
         </aside>
       </div>
-      
+
     </main>
- 
+
   </div>
 </template>
 
