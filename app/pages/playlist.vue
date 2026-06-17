@@ -21,7 +21,7 @@ useHead({
 })
 
 // Showcase input state
-const showcaseIdInput = ref('2488468')
+const showcaseIdInput = ref('12107219')
 const loadedShowcaseId = ref('')
 const isLoading = ref(false)
 const errorMsg = ref('')

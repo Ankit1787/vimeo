@@ -56,7 +56,7 @@ export const useVideoPlayer = (videos: VideoItem[] | Ref<VideoItem[]>) => {
 
   // Initialize Vimeo Player inside container element
   const initPlayer = async (container: HTMLDivElement) => {
-    if (!import.meta.client || !container) return
+    if (!import.meta.client || !container || !currentVideo.value) return
     containerRef.value = container
 
     try {
@@ -83,10 +83,12 @@ export const useVideoPlayer = (videos: VideoItem[] | Ref<VideoItem[]>) => {
         responsive: false
       }
 
-      // Use native id and hash options for private videos
-      options.id = Number(currentVideo.value.vimeoId)
+      // Private/unlisted videos need the hash inline on the URL; passing it
+      // separately via `hash:` has been unreliable on recent player.js builds.
       if (currentVideo.value.hash) {
-        options.hash = currentVideo.value.hash
+        options.url = `https://vimeo.com/${currentVideo.value.vimeoId}/${currentVideo.value.hash}`
+      } else {
+        options.id = Number(currentVideo.value.vimeoId)
       }
 
       // Initialize the native player
@@ -115,12 +117,16 @@ export const useVideoPlayer = (videos: VideoItem[] | Ref<VideoItem[]>) => {
 
     if (player) {
       try {
+        // player.loadVideo() keeps the `h=` from the original constructor URL,
+        // so for unlisted/private clips we must rebuild the player to get the
+        // correct hash on the iframe URL.
         if (currentVideo.value?.hash) {
-          await player.loadVideo({
-            id: Number(currentVideo.value.vimeoId),
-            hash: currentVideo.value.hash
-          })
-        } else if (currentVideo.value) {
+          if (containerRef.value) {
+            await initPlayer(containerRef.value)
+          }
+          return
+        }
+        if (currentVideo.value) {
           await player.loadVideo(Number(currentVideo.value.vimeoId))
         }
         
