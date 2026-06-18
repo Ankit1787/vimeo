@@ -56,7 +56,7 @@ export const useVideoPlayer = (videos: VideoItem[] | Ref<VideoItem[]>) => {
 
   // Initialize Vimeo Player inside container element
   const initPlayer = async (container: HTMLDivElement) => {
-    if (!import.meta.client || !container || !currentVideo.value) return
+    if (!import.meta.client || !container) return
     containerRef.value = container
 
     try {
@@ -85,6 +85,7 @@ export const useVideoPlayer = (videos: VideoItem[] | Ref<VideoItem[]>) => {
 
       // Private/unlisted videos need the hash inline on the URL; passing it
       // separately via `hash:` has been unreliable on recent player.js builds.
+      if (!currentVideo.value) return
       if (currentVideo.value.hash) {
         options.url = `https://vimeo.com/${currentVideo.value.vimeoId}/${currentVideo.value.hash}`
       } else {
