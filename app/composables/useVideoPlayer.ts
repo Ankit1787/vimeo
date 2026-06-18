@@ -49,6 +49,10 @@ export const useVideoPlayer = (videos: VideoItem[] | Ref<VideoItem[]>) => {
     return isRef(videos) ? videos.value : videos
   }
 
+  const hasMultipleVideos = computed(() => {
+    return getVideosList().length > 1
+  })
+
   const currentVideo = computed(() => {
     const list = getVideosList()
     return list[currentIndex.value] || null
@@ -100,7 +104,7 @@ export const useVideoPlayer = (videos: VideoItem[] | Ref<VideoItem[]>) => {
       })
 
       player.on('ended', () => {
-        if (autoplayNext.value) {
+        if (autoplayNext.value && hasMultipleVideos.value) {
           next()
         }
       })
@@ -174,6 +178,7 @@ export const useVideoPlayer = (videos: VideoItem[] | Ref<VideoItem[]>) => {
     initPlayer,
     next,
     previous,
-    changeVideo
+    changeVideo,
+    hasMultipleVideos
   }
 }
