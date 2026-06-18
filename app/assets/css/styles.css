@@ -94,11 +94,11 @@ html{
 }
 .font-myriad{
     font-family: "myriad-pro", sans-serif;
-font-weight: 700;
 font-style: normal;
 }
 .font-sodo{
     font-family: "SoDoSans", sans-serif;
+font-style: normal;
 }
 
 body {

@@ -240,24 +240,35 @@ const modalVideos = ref<VideoItem[]>([]);
 const playerState = useVideoPlayer(modalVideos);
 const modalPlaylistRef = ref<HTMLDivElement | null>(null);
 
+// Modal playlist button enable/disable states
+const modalPlaylistAtStart = ref(true);
+const modalPlaylistAtEnd = ref(false);
+
+const updateModalPlaylistScrollState = (el: HTMLElement | null) => {
+  if (!el) return;
+  const atStart = el.scrollLeft <= 5;
+  const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 8;
+  modalPlaylistAtStart.value = atStart;
+  modalPlaylistAtEnd.value = atEnd;
+};
+
 const scrollActiveThumbnailIntoView = () => {
   nextTick(() => {
     const activeIdx = playerState.currentIndex.value;
     const activeEl = document.getElementById(`modal-thumb-${activeIdx}`);
     const container = modalPlaylistRef.value;
     if (activeEl && container) {
-      const activeRect = activeEl.getBoundingClientRect();
-      const containerRect = container.getBoundingClientRect();
-      if (
-        activeRect.left < containerRect.left ||
-        activeRect.right > containerRect.right
-      ) {
-        activeEl.scrollIntoView({
-          behavior: "smooth",
-          block: "nearest",
-          inline: "center",
-        });
-      }
+      const offsetLeft = activeEl.offsetLeft;
+      const containerWidth = container.clientWidth;
+      const activeWidth = activeEl.clientWidth;
+      const targetScrollLeft = offsetLeft - (containerWidth / 2) + (activeWidth / 2);
+      container.scrollTo({
+        left: targetScrollLeft,
+        behavior: "smooth"
+      });
+      setTimeout(() => {
+        updateModalPlaylistScrollState(container);
+      }, 300);
     }
   });
 };
@@ -266,6 +277,9 @@ const scrollModalPlaylist = (dir: number) => {
   const el = modalPlaylistRef.value;
   if (!el) return;
   el.scrollBy({ left: dir * 160, behavior: "smooth" });
+  setTimeout(() => {
+    updateModalPlaylistScrollState(el);
+  }, 300);
 };
 
 const openModal = async (sectionIdx: number, cardIdx: number) => {
@@ -284,10 +298,11 @@ const openModal = async (sectionIdx: number, cardIdx: number) => {
 
   if (import.meta.client) document.body.style.overflow = "hidden";
 
-  // Force-load the correct clicked video on mount/modal open
-  nextTick(async () => {
-    await playerState.changeVideo(startIdx);
+  nextTick(() => {
     scrollActiveThumbnailIntoView();
+    setTimeout(() => {
+      updateModalPlaylistScrollState(modalPlaylistRef.value);
+    }, 500);
   });
 };
 
@@ -315,15 +330,6 @@ const handleKeyDown = (e: KeyboardEvent) => {
     closeModal();
   }
 };
-
-watch(modalOpen, async (open) => {
-  if (open) {
-    await nextTick();
-    if (playerState.containerRef.value) {
-      playerState.initPlayer(playerState.containerRef.value).catch(() => {});
-    }
-  }
-});
 
 onMounted(() => {
   fetchVideos();
@@ -393,7 +399,7 @@ onUnmounted(() => {
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
               <!-- Col 1: text (top-aligned) -->
               <div class="lg:col-span-3 flex flex-col justify-start">
-                <p class="text-sm font-sodo text-black leading-relaxed">
+                <p class="text-sm xl:text-[1rem]  font-sodo text-black leading-relaxed">
                   {{ card.description }}
                 </p>
               </div>
@@ -431,13 +437,13 @@ onUnmounted(() => {
               </div>
 
               <!-- Col 3: 3 smaller thumbs, stretched to match Col 2 height -->
-              <div class="lg:col-span-2 flex flex-col gap-2 h-full">
+              <div class="lg:col-span-2 flex flex-row lg:flex-col gap-2 w-full h-20 sm:h-28 md:h-36 lg:h-full">
                 <button
                   v-for="t in 3"
                   :key="t"
                   type="button"
                   @click="openModal(sIdx, (cIdx + t) % section.cards.length)"
-                  class="relative w-full flex-1 bg-neutral-200 overflow-hidden group focus:outline-none border-b-4 border-[#00653e]"
+                  class="relative flex-1 lg:w-full bg-neutral-200 overflow-hidden group focus:outline-none border-b-4 border-[#00653e] aspect-video lg:aspect-auto"
                 >
                   <img
                     v-if="thumbForCard(sIdx, (cIdx + t) % section.cards.length)"
@@ -505,7 +511,7 @@ onUnmounted(() => {
                   sIdx === 1 ? 'skills' : 'dev',
                 )
               "
-              class="flex gap-8 overflow-x-auto no-scrollbar snap-x snap-mandatory scroll-smooth pb-3 px-1"
+              class="flex gap-16 overflow-x-auto no-scrollbar snap-x snap-mandatory scroll-smooth pb-3 px-1"
             >
               <button
                 v-for="(card, cIdx) in section.cards"
@@ -513,8 +519,7 @@ onUnmounted(() => {
                 data-card
                 type="button"
                 @click="openModal(sIdx, cIdx)"
-                class="text-left group focus:outline-none snap-start shrink-0"
-                style="width: calc((100% - 4rem) / 3)"
+                class="text-left group focus:outline-none snap-start shrink-0 w-full sm:w-[calc((100%-2rem)/2)] lg:w-[calc((100%-4rem)/3)]"
               >
                 <!-- Thumbnail (Sharp corners + Green bottom border) -->
                 <div
@@ -547,12 +552,12 @@ onUnmounted(() => {
 
                 <!-- Title & Description -->
                 <h3
-                  class="font-sodo font-extrabold text-[14px] uppercase tracking-wider text-neutral-900 mb-2 group-hover:text-[#1b3d36] transition-colors leading-snug"
+                  class="font-myriad font-extrabold text-[1.3rem] uppercase tracking-wider text-neutral-900 mb-2 group-hover:text-[#1b3d36] transition-colors leading-snug h-14 line-clamp-2"
                 >
                   {{ card.title }}
                 </h3>
                 <p
-                  class="text-xs text-black leading-relaxed font-medium line-clamp-3"
+                  class="text-lg  text-black leading-relaxed font-medium line-clamp-3"
                 >
                   {{ card.description }}
                 </p>
@@ -578,15 +583,14 @@ onUnmounted(() => {
               >
             </button>
           </div>
-          <div>
+          <div class="pt-9 md:pt-[4rem]">
             <button
               v-for="(card, cIdx) in section.videos"
               :key="card.title"
               data-card
               type="button"
               @click="openModal(sIdx, cIdx)"
-              class="text-left group focus:outline-none snap-start shrink-0"
-              style="width: calc((100% - 4rem) / 3)"
+              class="text-left group focus:outline-none snap-start shrink-0 w-full sm:w-[calc((100%-2rem)/2)] lg:w-[calc((100%-4rem)/3)]"
             >
               <!-- Thumbnail (Sharp corners + Green bottom border) -->
               <div
@@ -619,12 +623,12 @@ onUnmounted(() => {
 
               <!-- Title & Description -->
               <h3
-                class="font-sodo font-extrabold text-[14px] uppercase tracking-wider text-neutral-900 mb-2 group-hover:text-[#1b3d36] transition-colors leading-snug"
+                  class="font-myriad font-extrabold text-[1.3rem] uppercase tracking-wider text-neutral-900 mb-2 group-hover:text-[#1b3d36] transition-colors leading-snug h-14 line-clamp-2"
               >
                 {{ card.title }}
               </h3>
               <p
-                class="text-xs text-black leading-relaxed font-medium line-clamp-3"
+                class="text-lg text-black leading-relaxed font-medium line-clamp-3"
               >
                 {{ card.description }}
               </p>
@@ -657,17 +661,20 @@ onUnmounted(() => {
             <button
               type="button"
               @click="scrollModalPlaylist(-1)"
-              class="w-7 h-12 bg-[#1b3d36] hover:bg-[#15302b] rounded-full text-white flex items-center justify-center shadow-md cursor-pointer shrink-0 transition-colors focus:outline-none border-none"
+              :disabled="modalPlaylistAtStart"
+              :class="modalPlaylistAtStart ? 'opacity-30 pointer-events-none' : 'opacity-100'"
+              class="w-7 h-12 bg-[#1b3d36] hover:bg-[#15302b] rounded-full text-white flex items-center justify-center shadow-md cursor-pointer shrink-0 transition-all duration-300 focus:outline-none border-none"
             >
               <span class="material-symbols-outlined text-xl font-bold"
                 >chevron_left</span
               >
             </button>
 
-            <!-- Scrollable Video Thumbnails in Original sequence -->
+            <!-- Scrollable Video Thumbnails in Original sequence (Exactly 3 showing) -->
             <div
               ref="modalPlaylistRef"
-              class="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth w-full max-w-[650px] py-2"
+              @scroll="updateModalPlaylistScrollState($event.target as HTMLElement)"
+              class="flex gap-3 overflow-x-auto no-scrollbar scroll-smooth w-full max-w-[500px] py-2"
             >
               <button
                 v-for="(video, idx) in modalVideos"
@@ -675,7 +682,7 @@ onUnmounted(() => {
                 :id="'modal-thumb-' + idx"
                 type="button"
                 @click="playerState.changeVideo(idx)"
-                class="relative shrink-0 w-36 border-b-4 border-[#00653e] aspect-video rounded bg-neutral-100 overflow-hidden group focus:outline-none transition-all duration-300"
+                class="relative shrink-0 w-[calc((100%-24px)/3)] border-b-4 border-[#00653e] aspect-video rounded bg-neutral-100 overflow-hidden group focus:outline-none transition-all duration-300"
                 :class="
                   playerState.currentIndex.value === idx
                     ? ' scale-105 z-10 shadow-lg'
@@ -715,7 +722,9 @@ onUnmounted(() => {
             <button
               type="button"
               @click="scrollModalPlaylist(1)"
-              class="w-7 h-12 bg-[#1b3d36] hover:bg-[#15302b] rounded-full text-white flex items-center justify-center shadow-md cursor-pointer shrink-0 transition-colors focus:outline-none border-none"
+              :disabled="modalPlaylistAtEnd"
+              :class="modalPlaylistAtEnd ? 'opacity-30 pointer-events-none' : 'opacity-100'"
+              class="w-7 h-12 bg-[#1b3d36] hover:bg-[#15302b] rounded-full text-white flex items-center justify-center shadow-md cursor-pointer shrink-0 transition-all duration-300 focus:outline-none border-none"
             >
               <span class="material-symbols-outlined text-xl font-bold"
                 >chevron_right</span
