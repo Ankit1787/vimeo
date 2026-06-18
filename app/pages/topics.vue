@@ -135,6 +135,12 @@ const fetchVideos = async () => {
     const res = await $fetch<any>(`/api/vimeo/showcase/${showcaseId}`);
     if (res?.success && Array.isArray(res.videos)) {
       videos.value = res.videos;
+      nextTick(() => {
+        setTimeout(() => {
+          updateScrollState(skillsScrollRef.value, "skills");
+          updateScrollState(devScrollRef.value, "dev");
+        }, 500);
+      });
     } else {
       errorMsg.value = res?.error || "Failed to load videos.";
     }
@@ -163,6 +169,25 @@ const thumbForCard = (sectionIdx: number, cardIdx: number): string => {
 // Carousel elements & scrolling
 const skillsScrollRef = ref<HTMLDivElement | null>(null);
 const devScrollRef = ref<HTMLDivElement | null>(null);
+
+// Carousel button enable/disable states
+const skillsAtStart = ref(true);
+const skillsAtEnd = ref(false);
+const devAtStart = ref(true);
+const devAtEnd = ref(false);
+
+const updateScrollState = (el: HTMLElement | null, type: "skills" | "dev") => {
+  if (!el) return;
+  const atStart = el.scrollLeft <= 5;
+  const atEnd = el.scrollLeft + el.clientWidth >= el.scrollWidth - 8;
+  if (type === "skills") {
+    skillsAtStart.value = atStart;
+    skillsAtEnd.value = atEnd;
+  } else {
+    devAtStart.value = atStart;
+    devAtEnd.value = atEnd;
+  }
+};
 
 const scrollCarousel = (el: HTMLDivElement | null, dir: number) => {
   if (!el) return;
@@ -199,6 +224,8 @@ const scrollCarousel = (el: HTMLDivElement | null, dir: number) => {
 
     if (progress < 1) {
       requestAnimationFrame(animate);
+    } else {
+      updateScrollState(el, el === skillsScrollRef.value ? "skills" : "dev");
     }
   };
 
@@ -211,6 +238,35 @@ const modalSection = ref<Section | null>(null);
 const modalVideos = ref<VideoItem[]>([]);
 
 const playerState = useVideoPlayer(modalVideos);
+const modalPlaylistRef = ref<HTMLDivElement | null>(null);
+
+const scrollActiveThumbnailIntoView = () => {
+  nextTick(() => {
+    const activeIdx = playerState.currentIndex.value;
+    const activeEl = document.getElementById(`modal-thumb-${activeIdx}`);
+    const container = modalPlaylistRef.value;
+    if (activeEl && container) {
+      const activeRect = activeEl.getBoundingClientRect();
+      const containerRect = container.getBoundingClientRect();
+      if (
+        activeRect.left < containerRect.left ||
+        activeRect.right > containerRect.right
+      ) {
+        activeEl.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+          inline: "center",
+        });
+      }
+    }
+  });
+};
+
+const scrollModalPlaylist = (dir: number) => {
+  const el = modalPlaylistRef.value;
+  if (!el) return;
+  el.scrollBy({ left: dir * 160, behavior: "smooth" });
+};
 
 const openModal = async (sectionIdx: number, cardIdx: number) => {
   const section = sections[sectionIdx];
@@ -221,22 +277,17 @@ const openModal = async (sectionIdx: number, cardIdx: number) => {
     ? videos.value.findIndex((v) => v.vimeoId === startVideo.vimeoId)
     : 0;
 
-  // Create modular video playlist based on clicked item
-  const list: VideoItem[] = [];
-  for (let i = 0; i < videos.value.length; i++) {
-    list.push(videos.value[(startIdx + i) % videos.value.length]);
-  }
-
   modalSection.value = section;
-  modalVideos.value = list;
-  playerState.currentIndex.value = 0;
+  modalVideos.value = videos.value; // Keep original sequential order
+  playerState.currentIndex.value = startIdx;
   modalOpen.value = true;
 
   if (import.meta.client) document.body.style.overflow = "hidden";
 
   // Force-load the correct clicked video on mount/modal open
   nextTick(async () => {
-    await playerState.changeVideo(0);
+    await playerState.changeVideo(startIdx);
+    scrollActiveThumbnailIntoView();
   });
 };
 
@@ -246,23 +297,12 @@ const closeModal = () => {
   if (import.meta.client) document.body.style.overflow = "";
 };
 
-// Fetch relative video in modal (offset = -1 for prev, 0 for current, 1 for next)
-const getRelativeVideo = (offset: number): VideoItem | null => {
-  if (modalVideos.value.length === 0) return null;
-  const total = modalVideos.value.length;
-  const currentIdx = playerState.currentIndex.value;
-  const targetIdx = (currentIdx + offset + total) % total;
-  return modalVideos.value[targetIdx];
-};
-
-const handlePlaylistThumbnailClick = (offset: number) => {
-  if (offset === 0) return;
-  if (offset === -1) {
-    playerState.previous();
-  } else if (offset === 1) {
-    playerState.next();
-  }
-};
+watch(
+  () => playerState.currentIndex.value,
+  () => {
+    scrollActiveThumbnailIntoView();
+  },
+);
 
 // Keyboard navigation listener
 const handleKeyDown = (e: KeyboardEvent) => {
@@ -306,40 +346,54 @@ onUnmounted(() => {
       :key="section.key"
       :class="section.key == 'skills' ? 'bg-[#f1f1f0]' : 'bg-white'"
     >
-      <div class="max-w-[1240px] mx-auto px-4 md:px-8 py-12">
+      <div class="max-w-[1240px] mx-auto px-4 md:px-8 py-14 pb-[9rem]">
         <!-- Green banner -->
-        <div class="bg-[#1b3d36] text-white px-6 py-5 mb-8">
+        <div
+          :class="
+            section.key == 'mindset'
+              ? 'bg-[#1b3d36] text-white '
+              : 'bg-transparent text-black'
+          "
+          class="px-8 py-9 mb-12  md:mb-[6rem]"
+        >
           <h2
-            class="font-sodo text-lg md:text-xl font-bold tracking-wide uppercase mb-1"
+            class="font-sodo text-lg md:text-3xl mb-3 font-bold tracking-wide uppercase mb-1"
           >
             {{ section.title }}
           </h2>
           <p
-            class="text-xs md:text-sm text-white/90 leading-relaxed max-w-4xl font-medium"
+            :class="
+              section.key == 'mindset'
+                ? 'text-white/90 '
+                : ' text-black'
+            "
+            class="text-xs md:text-lg  leading-relaxed max-w-4xl font-medium"
           >
             {{ section.intro }}
           </p>
         </div>
 
         <!-- ===== SPLIT LAYOUT (Mindset): text | BIG video | 3 smaller thumbs (same height as main video) ===== -->
-        <div v-if="section.layout === 'split'" class="space-y-12">
+        <div
+          v-if="section.layout === 'split'"
+          class="space-y-12 "
+        >
           <div
             v-for="(card, cIdx) in section.cards"
             :key="card.title"
             class="flex flex-col"
           >
-          <div>
-             <h3
-                  class="font-sodo font-bold text-2xl tracking-tight text-neutral-900   pb-1 self-start uppercase"
-                >
-                  {{ card.title }}
-                </h3>
-          </div>
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 ">
+            <div>
+              <h3
+                class="font-sodo font-bold text-2xl tracking-tight text-neutral-900 pb-1 self-start uppercase"
+              >
+                {{ card.title }}
+              </h3>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
               <!-- Col 1: text (top-aligned) -->
               <div class="lg:col-span-3 flex flex-col justify-start">
-               
-                <p class="text-sm font-sodo text-black leading-relaxed ">
+                <p class="text-sm font-sodo text-black leading-relaxed">
                   {{ card.description }}
                 </p>
               </div>
@@ -383,7 +437,7 @@ onUnmounted(() => {
                   :key="t"
                   type="button"
                   @click="openModal(sIdx, (cIdx + t) % section.cards.length)"
-                  class="relative w-full flex-1 bg-neutral-200 overflow-hidden group focus:outline-none border-b-2 border-[#1b3d36]"
+                  class="relative w-full flex-1 bg-neutral-200 overflow-hidden group focus:outline-none border-b-4 border-[#00653e]"
                 >
                   <img
                     v-if="thumbForCard(sIdx, (cIdx + t) % section.cards.length)"
@@ -424,7 +478,13 @@ onUnmounted(() => {
               @click="
                 scrollCarousel(sIdx === 1 ? skillsScrollRef : devScrollRef, -1)
               "
-              class="absolute left-[-12px] sm:left-[-24px] lg:left-[-32px] xl:left-[-48px] top-[30%] -translate-y-1/2 z-10 w-7 h-14 bg-[#1b3d36] hover:bg-[#15302b] rounded-full text-white flex items-center justify-center shadow-lg transition-colors cursor-pointer focus:outline-none border-none"
+              :disabled="sIdx === 1 ? skillsAtStart : devAtStart"
+              :class="
+                (sIdx === 1 ? skillsAtStart : devAtStart)
+                  ? 'opacity-30 pointer-events-none'
+                  : 'opacity-100'
+              "
+              class="absolute left-[-12px] sm:left-[-24px] lg:left-[-32px] xl:left-[-48px] top-[30%] -translate-y-1/2 z-10 w-7 h-14 bg-[#1b3d36] hover:bg-[#15302b] rounded-full text-white flex items-center justify-center shadow-lg transition-all duration-300 cursor-pointer focus:outline-none border-none"
             >
               <span class="material-symbols-outlined text-xl font-bold"
                 >chevron_left</span
@@ -439,6 +499,12 @@ onUnmounted(() => {
                   else devScrollRef = el as any;
                 }
               "
+              @scroll="
+                updateScrollState(
+                  $event.target as HTMLElement,
+                  sIdx === 1 ? 'skills' : 'dev',
+                )
+              "
               class="flex gap-8 overflow-x-auto no-scrollbar snap-x snap-mandatory scroll-smooth pb-3 px-1"
             >
               <button
@@ -452,7 +518,7 @@ onUnmounted(() => {
               >
                 <!-- Thumbnail (Sharp corners + Green bottom border) -->
                 <div
-                  class="relative w-full aspect-video bg-neutral-200 overflow-hidden mb-4 shadow-sm group-hover:shadow-md transition-shadow duration-300 border-b-4 border-[#1b3d36]"
+                  class="relative w-full aspect-video bg-neutral-200 overflow-hidden mb-4 shadow-sm group-hover:shadow-md transition-shadow duration-300 border-b-6 border-[#00653e]"
                 >
                   <img
                     v-if="thumbForCard(sIdx, cIdx)"
@@ -499,7 +565,13 @@ onUnmounted(() => {
               @click="
                 scrollCarousel(sIdx === 1 ? skillsScrollRef : devScrollRef, 1)
               "
-              class="absolute right-[-12px] sm:right-[-24px] lg:right-[-32px] xl:right-[-48px] top-[30%] -translate-y-1/2 z-10 w-7 h-14 bg-[#1b3d36] hover:bg-[#15302b] rounded-full text-white flex items-center justify-center shadow-lg transition-colors cursor-pointer focus:outline-none border-none"
+              :disabled="sIdx === 1 ? skillsAtEnd : devAtEnd"
+              :class="
+                (sIdx === 1 ? skillsAtEnd : devAtEnd)
+                  ? 'opacity-30 pointer-events-none'
+                  : 'opacity-100'
+              "
+              class="absolute right-[-12px] sm:right-[-24px] lg:right-[-32px] xl:right-[-48px] top-[30%] -translate-y-1/2 z-10 w-7 h-14 bg-[#1b3d36] hover:bg-[#15302b] rounded-full text-white flex items-center justify-center shadow-lg transition-all duration-300 cursor-pointer focus:outline-none border-none"
             >
               <span class="material-symbols-outlined text-xl font-bold"
                 >chevron_right</span
@@ -518,7 +590,7 @@ onUnmounted(() => {
             >
               <!-- Thumbnail (Sharp corners + Green bottom border) -->
               <div
-                class="relative w-full aspect-video bg-neutral-200 overflow-hidden mb-4 shadow-sm group-hover:shadow-md transition-shadow duration-300 border-b-4 border-[#1b3d36]"
+                class="relative w-full aspect-video bg-neutral-200 overflow-hidden mb-4 shadow-sm group-hover:shadow-md transition-shadow duration-300 border-b-6 border-[#00653e]"
               >
                 <img
                   v-if="thumbForCard(sIdx, cIdx)"
@@ -565,23 +637,14 @@ onUnmounted(() => {
     <!-- ===== MODAL: white card, main video + 3-video playlist with arrow keys ===== -->
     <div
       v-if="modalOpen"
-      class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-3 md:p-6"
+      class="fixed inset-0 z-50 bg-black/60 flex items-center justify-center"
       @click.self="closeModal"
     >
       <div
-        class="bg-white rounded-lg w-full max-w-[950px] shadow-2xl relative overflow-hidden"
+        class="bg-white rounded-lg p-1 w-full max-w-[950px] shadow-2xl relative overflow-hidden"
       >
-        <!-- Close button -->
-        <button
-          type="button"
-          @click="closeModal"
-          class="absolute top-4 right-4 z-10 w-8 h-8 rounded-full bg-black/20 hover:bg-black/40 text-white flex items-center justify-center transition-all cursor-pointer border-none"
-        >
-          <span class="material-symbols-outlined text-lg font-bold">close</span>
-        </button>
-
         <!-- Main Video Container -->
-        <div class="p-4 md:p-6 bg-black">
+        <div class="">
           <VideoPlayer :player-state="playerState" />
         </div>
 
@@ -589,19 +652,11 @@ onUnmounted(() => {
         <div
           class="p-5 md:p-7 bg-white border-t border-neutral-100 flex flex-col items-center"
         >
-          <h4
-            class="text-xs font-bold text-neutral-500 uppercase tracking-widest mb-4"
-          >
-            Leadership Playlist
-          </h4>
-
-          <div
-            class="flex items-center justify-center gap-4 w-full max-w-[700px]"
-          >
-            <!-- Left Chevron Button -->
+          <div class="flex items-center justify-center gap-4 w-full">
+            <!-- Left Scroll Button -->
             <button
               type="button"
-              @click="playerState.previous()"
+              @click="scrollModalPlaylist(-1)"
               class="w-7 h-12 bg-[#1b3d36] hover:bg-[#15302b] rounded-full text-white flex items-center justify-center shadow-md cursor-pointer shrink-0 transition-colors focus:outline-none border-none"
             >
               <span class="material-symbols-outlined text-xl font-bold"
@@ -609,37 +664,39 @@ onUnmounted(() => {
               >
             </button>
 
-            <!-- Exactly 3 Video Thumbnails -->
-            <div class="flex gap-4 items-center justify-center w-full">
+            <!-- Scrollable Video Thumbnails in Original sequence -->
+            <div
+              ref="modalPlaylistRef"
+              class="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth w-full max-w-[650px] py-2"
+            >
               <button
-                v-for="offset in [-1, 0, 1]"
-                :key="offset"
+                v-for="(video, idx) in modalVideos"
+                :key="video.vimeoId"
+                :id="'modal-thumb-' + idx"
                 type="button"
-                @click="handlePlaylistThumbnailClick(offset)"
-                class="relative w-[30%] aspect-video rounded bg-neutral-100 overflow-hidden group focus:outline-none transition-all duration-300"
+                @click="playerState.changeVideo(idx)"
+                class="relative shrink-0 w-36 border-b-4 border-[#00653e] aspect-video rounded bg-neutral-100 overflow-hidden group focus:outline-none transition-all duration-300"
                 :class="
-                  offset === 0
-                    ? 'ring-4 ring-[#1b3d36] scale-105 z-10 shadow-lg'
-                    : 'opacity-65 hover:opacity-90 ring-1 ring-neutral-200 shadow-sm'
+                  playerState.currentIndex.value === idx
+                    ? ' scale-105 z-10 shadow-lg'
+                    : 'opacity-65 hover:opacity-90 shadow-sm'
                 "
               >
                 <img
-                  v-if="getRelativeVideo(offset)"
-                  :src="getRelativeVideo(offset).thumbnail"
-                  :alt="getRelativeVideo(offset).title"
+                  :src="video.thumbnail"
+                  :alt="video.title"
                   class="w-full h-full object-cover"
                 />
 
                 <div
-                  v-if="getRelativeVideo(offset)"
                   class="absolute bottom-1 right-1 text-[9px] bg-black/75 text-white px-1 rounded font-semibold"
                 >
-                  {{ getRelativeVideo(offset).duration }}
+                  {{ video.duration }}
                 </div>
 
-                <!-- Active Indicator / Play Icon overlay -->
+                <!-- Play Icon overlay for inactive thumbnails -->
                 <div
-                  v-if="offset !== 0 && getRelativeVideo(offset)"
+                  v-if="playerState.currentIndex.value !== idx"
                   class="absolute inset-0 bg-black/15 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   <div
@@ -654,10 +711,10 @@ onUnmounted(() => {
               </button>
             </div>
 
-            <!-- Right Chevron Button -->
+            <!-- Right Scroll Button -->
             <button
               type="button"
-              @click="playerState.next()"
+              @click="scrollModalPlaylist(1)"
               class="w-7 h-12 bg-[#1b3d36] hover:bg-[#15302b] rounded-full text-white flex items-center justify-center shadow-md cursor-pointer shrink-0 transition-colors focus:outline-none border-none"
             >
               <span class="material-symbols-outlined text-xl font-bold"

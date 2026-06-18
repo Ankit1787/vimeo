@@ -118,17 +118,15 @@ export const useVideoPlayer = (videos: VideoItem[] | Ref<VideoItem[]>) => {
 
     if (player) {
       try {
-        // player.loadVideo() keeps the `h=` from the original constructor URL,
-        // so for unlisted/private clips we must rebuild the player to get the
-        // correct hash on the iframe URL.
-        if (currentVideo.value?.hash) {
-          if (containerRef.value) {
-            await initPlayer(containerRef.value)
-          }
-          return
-        }
         if (currentVideo.value) {
-          await player.loadVideo(Number(currentVideo.value.vimeoId))
+          if (currentVideo.value.hash) {
+            // Load private/unlisted videos dynamically using the URL options format with the h parameter
+            await player.loadVideo({
+              url: `https://vimeo.com/${currentVideo.value.vimeoId}?h=${currentVideo.value.hash}`
+            })
+          } else {
+            await player.loadVideo(Number(currentVideo.value.vimeoId))
+          }
         }
         
         // Explicitly trigger play after loading the new video
