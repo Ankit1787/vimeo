@@ -519,7 +519,7 @@ onUnmounted(() => {
                 data-card
                 type="button"
                 @click="openModal(sIdx, cIdx)"
-                class="text-left group focus:outline-none snap-start shrink-0 w-full sm:w-[calc((100%-2rem)/2)] lg:w-[calc((100%-4rem)/3)]"
+                class="text-left group focus:outline-none snap-start shrink-0 w-full sm:w-[calc((100%-4rem)/2)] lg:w-[calc((100%-8rem)/3)]"
               >
                 <!-- Thumbnail (Sharp corners + Green bottom border) -->
                 <div
@@ -590,7 +590,7 @@ onUnmounted(() => {
               data-card
               type="button"
               @click="openModal(sIdx, cIdx)"
-              class="text-left group focus:outline-none snap-start shrink-0 w-full sm:w-[calc((100%-2rem)/2)] lg:w-[calc((100%-4rem)/3)]"
+              class="text-left group focus:outline-none snap-start shrink-0 w-full sm:w-[calc((100%-4rem)/2)] lg:w-[calc((100%-8rem)/3)]"
             >
               <!-- Thumbnail (Sharp corners + Green bottom border) -->
               <div
