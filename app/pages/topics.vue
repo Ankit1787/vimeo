@@ -57,7 +57,6 @@ const sections: Section[] = [
           "Winning together starts with meaningful connection — coaching through listening, checking in, and understanding what partners need to feel supported and confident. Coaching also brings clarity by helping partners understand goals, expectations, and priorities so the work feels lighter and teams stay aligned. It means helping partners unpack the load, stepping in when someone is struggling, and celebrating growth and progress along the way.",
       },
     ],
-    
   },
   {
     key: "skills",
@@ -87,11 +86,13 @@ const sections: Section[] = [
           "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed varius commodo ullamcorper. Fusce nec dignissim turpis. Proin volutpat quis augue sed egestas. Cras nulla enim. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed varius commodo ullamcorper. Fusce nec dignissim turpis.",
       },
     ],
-    videos:[{
+    videos: [
+      {
         title: "ACT LIKE AN OWNER",
         description:
           "Embracing an ownership mindset transforms how you lead, how you show up, and how you drive meaningful results. Acting like an owner is about stepping into full responsibility for your area — owning not just the outcomes, but the thinking, decisions, and behaviors that create them. It means looking ahead, anticipating challenges before they surface, and asking the important questions others may overlook",
-      }],
+      },
+    ],
   },
   {
     key: "development",
@@ -305,11 +306,11 @@ onUnmounted(() => {
       :key="section.key"
       :class="section.key == 'skills' ? 'bg-[#f1f1f0]' : 'bg-white'"
     >
-      <div class="max-w-[1240px] mx-auto px-4 md:px-8  py-12">
+      <div class="max-w-[1240px] mx-auto px-4 md:px-8 py-12">
         <!-- Green banner -->
         <div class="bg-[#1b3d36] text-white px-6 py-5 mb-8">
           <h2
-            class="font-display text-lg md:text-xl font-bold tracking-wide uppercase mb-1"
+            class="font-sodo text-lg md:text-xl font-bold tracking-wide uppercase mb-1"
           >
             {{ section.title }}
           </h2>
@@ -325,84 +326,91 @@ onUnmounted(() => {
           <div
             v-for="(card, cIdx) in section.cards"
             :key="card.title"
-            class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch"
+            class="flex flex-col"
           >
-            <!-- Col 1: text (top-aligned) -->
-            <div class="lg:col-span-3 flex flex-col justify-start">
-              <h3
-                class="font-display font-bold text-xl tracking-tight text-neutral-900 mb-3 border-b border-[#1b3d36]/20 pb-1 self-start uppercase"
-              >
-                {{ card.title }}
-              </h3>
-              <p class="text-sm text-neutral-600 leading-relaxed font-medium">
-                {{ card.description }}
-              </p>
-            </div>
-
-            <!-- Col 2: big featured video -->
-            <div class="lg:col-span-6 flex items-center">
-              <button
-                type="button"
-                @click="openModal(sIdx, cIdx)"
-                class="relative block w-full aspect-video bg-neutral-200 overflow-hidden group focus:outline-none"
-              >
-                <img
-                  v-if="thumbForCard(sIdx, cIdx)"
-                  :src="thumbForCard(sIdx, cIdx)"
-                  :alt="card.title"
-                  class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
-                />
-                <div
-                  v-else
-                  class="w-full h-full bg-neutral-300 animate-pulse"
-                ></div>
-                <div
-                  class="absolute inset-0 bg-black/15 flex items-center justify-center transition-colors group-hover:bg-black/30"
+          <div>
+             <h3
+                  class="font-sodo font-bold text-2xl tracking-tight text-neutral-900   pb-1 self-start uppercase"
                 >
-                  <div
-                    class="w-16 h-16 rounded-full bg-white/95 flex items-center justify-center shadow-lg"
-                  >
-                    <span
-                      class="material-symbols-outlined text-3xl text-black translate-x-[1px]"
-                      >play_arrow</span
-                    >
-                  </div>
-                </div>
-              </button>
-            </div>
+                  {{ card.title }}
+                </h3>
+          </div>
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 ">
+              <!-- Col 1: text (top-aligned) -->
+              <div class="lg:col-span-3 flex flex-col justify-start">
+               
+                <p class="text-sm font-sodo text-black leading-relaxed ">
+                  {{ card.description }}
+                </p>
+              </div>
 
-            <!-- Col 3: 3 smaller thumbs, stretched to match Col 2 height -->
-            <div class="lg:col-span-3 flex flex-col gap-2 h-full">
-              <button
-                v-for="t in 3"
-                :key="t"
-                type="button"
-                @click="openModal(sIdx, (cIdx + t) % section.cards.length)"
-                class="relative w-full flex-1 bg-neutral-200 overflow-hidden group focus:outline-none border-b-2 border-[#1b3d36]"
-              >
-                <img
-                  v-if="thumbForCard(sIdx, (cIdx + t) % section.cards.length)"
-                  :src="thumbForCard(sIdx, (cIdx + t) % section.cards.length)"
-                  :alt="section.cards[(cIdx + t) % section.cards.length].title"
-                  class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <div
-                  v-else
-                  class="absolute inset-0 bg-neutral-300 animate-pulse"
-                ></div>
-                <div
-                  class="absolute inset-0 bg-black/20 flex items-center justify-center opacity-70 group-hover:opacity-100 transition-opacity"
+              <!-- Col 2: big featured video -->
+              <div class="lg:col-span-7 flex items-center">
+                <button
+                  type="button"
+                  @click="openModal(sIdx, cIdx)"
+                  class="relative block w-full aspect-video bg-neutral-200 overflow-hidden group focus:outline-none"
                 >
+                  <img
+                    v-if="thumbForCard(sIdx, cIdx)"
+                    :src="thumbForCard(sIdx, cIdx)"
+                    :alt="card.title"
+                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                  />
                   <div
-                    class="w-8 h-8 rounded-full bg-white/95 flex items-center justify-center shadow-md"
+                    v-else
+                    class="w-full h-full bg-neutral-300 animate-pulse"
+                  ></div>
+                  <div
+                    class="absolute inset-0 bg-black/15 flex items-center justify-center transition-colors group-hover:bg-black/30"
                   >
-                    <span
-                      class="material-symbols-outlined text-base text-black translate-x-[1px]"
-                      >play_arrow</span
+                    <div
+                      class="w-16 h-16 rounded-full bg-white/95 flex items-center justify-center shadow-lg"
                     >
+                      <span
+                        class="material-symbols-outlined text-3xl text-black translate-x-[1px]"
+                        >play_arrow</span
+                      >
+                    </div>
                   </div>
-                </div>
-              </button>
+                </button>
+              </div>
+
+              <!-- Col 3: 3 smaller thumbs, stretched to match Col 2 height -->
+              <div class="lg:col-span-2 flex flex-col gap-2 h-full">
+                <button
+                  v-for="t in 3"
+                  :key="t"
+                  type="button"
+                  @click="openModal(sIdx, (cIdx + t) % section.cards.length)"
+                  class="relative w-full flex-1 bg-neutral-200 overflow-hidden group focus:outline-none border-b-2 border-[#1b3d36]"
+                >
+                  <img
+                    v-if="thumbForCard(sIdx, (cIdx + t) % section.cards.length)"
+                    :src="thumbForCard(sIdx, (cIdx + t) % section.cards.length)"
+                    :alt="
+                      section.cards[(cIdx + t) % section.cards.length].title
+                    "
+                    class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div
+                    v-else
+                    class="absolute inset-0 bg-neutral-300 animate-pulse"
+                  ></div>
+                  <div
+                    class="absolute inset-0 bg-black/20 flex items-center justify-center opacity-70 group-hover:opacity-100 transition-opacity"
+                  >
+                    <div
+                      class="w-8 h-8 rounded-full bg-white/95 flex items-center justify-center shadow-md"
+                    >
+                      <span
+                        class="material-symbols-outlined text-base text-black translate-x-[1px]"
+                        >play_arrow</span
+                      >
+                    </div>
+                  </div>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -410,99 +418,96 @@ onUnmounted(() => {
         <!-- ===== SKILLS & DEVELOPMENT: horizontal carousel flanked by green capsule chevrons ===== -->
         <div v-else class="relative px-2">
           <div class="relative">
-
-
-          
-          <!-- Left Chevron Button (Green Capsule) -->
-          <button
-            type="button"
-            @click="
-              scrollCarousel(sIdx === 1 ? skillsScrollRef : devScrollRef, -1)
-            "
-            class="absolute left-[-15px] top-[30%] -translate-y-1/2 z-10 w-7 h-14 bg-[#1b3d36] hover:bg-[#15302b] rounded-full text-white flex items-center justify-center shadow-lg transition-colors cursor-pointer focus:outline-none border-none"
-          >
-            <span class="material-symbols-outlined text-xl font-bold"
-              >chevron_left</span
-            >
-          </button>
-
-          <!-- Scrollable Row (no-scrollbar) -->
-          <div
-            :ref="
-              (el) => {
-                if (sIdx === 1) skillsScrollRef = el as any;
-                else devScrollRef = el as any;
-              }
-            "
-            class="flex gap-8 overflow-x-auto no-scrollbar snap-x snap-mandatory scroll-smooth pb-3 px-1"
-          >
+            <!-- Left Chevron Button (Green Capsule) -->
             <button
-              v-for="(card, cIdx) in section.cards"
-              :key="card.title"
-              data-card
               type="button"
-              @click="openModal(sIdx, cIdx)"
-              class="text-left group focus:outline-none snap-start shrink-0"
-              style="width: calc((100% - 4rem) / 3)"
+              @click="
+                scrollCarousel(sIdx === 1 ? skillsScrollRef : devScrollRef, -1)
+              "
+              class="absolute left-[-12px] sm:left-[-24px] lg:left-[-32px] xl:left-[-48px] top-[30%] -translate-y-1/2 z-10 w-7 h-14 bg-[#1b3d36] hover:bg-[#15302b] rounded-full text-white flex items-center justify-center shadow-lg transition-colors cursor-pointer focus:outline-none border-none"
             >
-              <!-- Thumbnail (Sharp corners + Green bottom border) -->
-              <div
-                class="relative w-full aspect-video bg-neutral-200 overflow-hidden mb-4 shadow-sm group-hover:shadow-md transition-shadow duration-300 border-b-4 border-[#1b3d36]"
+              <span class="material-symbols-outlined text-xl font-bold"
+                >chevron_left</span
               >
-                <img
-                  v-if="thumbForCard(sIdx, cIdx)"
-                  :src="thumbForCard(sIdx, cIdx)"
-                  :alt="card.title"
-                  class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
+            </button>
+
+            <!-- Scrollable Row (no-scrollbar) -->
+            <div
+              :ref="
+                (el) => {
+                  if (sIdx === 1) skillsScrollRef = el as any;
+                  else devScrollRef = el as any;
+                }
+              "
+              class="flex gap-8 overflow-x-auto no-scrollbar snap-x snap-mandatory scroll-smooth pb-3 px-1"
+            >
+              <button
+                v-for="(card, cIdx) in section.cards"
+                :key="card.title"
+                data-card
+                type="button"
+                @click="openModal(sIdx, cIdx)"
+                class="text-left group focus:outline-none snap-start shrink-0"
+                style="width: calc((100% - 4rem) / 3)"
+              >
+                <!-- Thumbnail (Sharp corners + Green bottom border) -->
                 <div
-                  v-else
-                  class="w-full h-full bg-neutral-300 animate-pulse"
-                ></div>
-                <!-- Play overlay -->
-                <div
-                  class="absolute inset-0 bg-black/15 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  class="relative w-full aspect-video bg-neutral-200 overflow-hidden mb-4 shadow-sm group-hover:shadow-md transition-shadow duration-300 border-b-4 border-[#1b3d36]"
                 >
+                  <img
+                    v-if="thumbForCard(sIdx, cIdx)"
+                    :src="thumbForCard(sIdx, cIdx)"
+                    :alt="card.title"
+                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
                   <div
-                    class="w-12 h-12 rounded-full bg-white/95 flex items-center justify-center shadow-md"
+                    v-else
+                    class="w-full h-full bg-neutral-300 animate-pulse"
+                  ></div>
+                  <!-- Play overlay -->
+                  <div
+                    class="absolute inset-0 bg-black/15 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
                   >
-                    <span
-                      class="material-symbols-outlined text-2xl text-[#1b3d36] translate-x-[1.5px] font-bold"
-                      >play_arrow</span
+                    <div
+                      class="w-12 h-12 rounded-full bg-white/95 flex items-center justify-center shadow-md"
                     >
+                      <span
+                        class="material-symbols-outlined text-2xl text-[#1b3d36] translate-x-[1.5px] font-bold"
+                        >play_arrow</span
+                      >
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <!-- Title & Description -->
-              <h3
-                class="font-display font-extrabold text-[14px] uppercase tracking-wider text-neutral-900 mb-2 group-hover:text-[#1b3d36] transition-colors leading-snug"
+                <!-- Title & Description -->
+                <h3
+                  class="font-sodo font-extrabold text-[14px] uppercase tracking-wider text-neutral-900 mb-2 group-hover:text-[#1b3d36] transition-colors leading-snug"
+                >
+                  {{ card.title }}
+                </h3>
+                <p
+                  class="text-xs text-black leading-relaxed font-medium line-clamp-3"
+                >
+                  {{ card.description }}
+                </p>
+              </button>
+            </div>
+
+            <!-- Right Chevron Button (Green Capsule) -->
+            <button
+              type="button"
+              @click="
+                scrollCarousel(sIdx === 1 ? skillsScrollRef : devScrollRef, 1)
+              "
+              class="absolute right-[-12px] sm:right-[-24px] lg:right-[-32px] xl:right-[-48px] top-[30%] -translate-y-1/2 z-10 w-7 h-14 bg-[#1b3d36] hover:bg-[#15302b] rounded-full text-white flex items-center justify-center shadow-lg transition-colors cursor-pointer focus:outline-none border-none"
+            >
+              <span class="material-symbols-outlined text-xl font-bold"
+                >chevron_right</span
               >
-                {{ card.title }}
-              </h3>
-              <p
-                class="text-xs text-neutral-600 leading-relaxed font-medium line-clamp-3"
-              >
-                {{ card.description }}
-              </p>
             </button>
           </div>
-
-          <!-- Right Chevron Button (Green Capsule) -->
-          <button
-            type="button"
-            @click="
-              scrollCarousel(sIdx === 1 ? skillsScrollRef : devScrollRef, 1)
-            "
-            class="absolute right-[-15px] top-[30%] -translate-y-1/2 z-10 w-7 h-14 bg-[#1b3d36] hover:bg-[#15302b] rounded-full text-white flex items-center justify-center shadow-lg transition-colors cursor-pointer focus:outline-none border-none"
-          >
-            <span class="material-symbols-outlined text-xl font-bold"
-              >chevron_right</span
-            >
-          </button>
-          </div>
           <div>
-                  <button
+            <button
               v-for="(card, cIdx) in section.videos"
               :key="card.title"
               data-card
@@ -542,18 +547,17 @@ onUnmounted(() => {
 
               <!-- Title & Description -->
               <h3
-                class="font-display font-extrabold text-[14px] uppercase tracking-wider text-neutral-900 mb-2 group-hover:text-[#1b3d36] transition-colors leading-snug"
+                class="font-sodo font-extrabold text-[14px] uppercase tracking-wider text-neutral-900 mb-2 group-hover:text-[#1b3d36] transition-colors leading-snug"
               >
                 {{ card.title }}
               </h3>
               <p
-                class="text-xs text-neutral-600 leading-relaxed font-medium line-clamp-3"
+                class="text-xs text-black leading-relaxed font-medium line-clamp-3"
               >
                 {{ card.description }}
               </p>
             </button>
           </div>
-
         </div>
       </div>
     </section>
