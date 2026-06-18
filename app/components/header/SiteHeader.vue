@@ -37,8 +37,8 @@ const route = useRoute()
           Playlist
           </NuxtLink>
           <NuxtLink 
-            :class="route.path === '/topic' ? 'text-primary font-bold border-b-2 border-primary pb-2 font-label-md text-label-md transition-all' : 'text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md'" 
-            to="/topic"
+            :class="route.path === '/topics' ? 'text-primary font-bold border-b-2 border-primary pb-2 font-label-md text-label-md transition-all' : 'text-on-surface-variant font-medium hover:text-primary transition-colors duration-200 font-label-md text-label-md'" 
+            to="/topics"
           >
           Topic
           </NuxtLink>
